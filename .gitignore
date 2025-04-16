@@ -1,0 +1,8 @@
+# Ignore parquet files
+*.parquet
+
+# Ignore specific CSV files in raw_data/retail directory
+raw_data/retail/sales_train_validation.csv
+raw_data/retail/sell_prices.csv
+
+# Add other files you want to ignore below
