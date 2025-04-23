@@ -1,0 +1,27 @@
+谷歌股价SARIMAX模型预测报告
+生成时间: 2025-04-23 14:46:27
+
+模型信息:
+- 模型类型: SARIMAX
+- 非季节性参数 (p,d,q): (4, 1, 4)
+- 季节性参数 (P,D,Q,s): (1, 1, 1, 10)
+- 使用Monte Carlo模拟生成预测
+
+技术指标:
+- Close
+- Returns
+- Volatility
+- Price_MA5_Ratio
+- Price_MA20_Ratio
+- Volume_Ratio
+
+预测评估指标:
+均方误差 (MSE): 442.4970
+均方根误差 (RMSE): 21.0356
+平均绝对误差 (MAE): 16.3426
+R² 分数: -1.3982
+
+预测结果已保存到: predictions_20250423_144627.csv
+预测图表已保存到: prediction_plot_20250423_144627.png
+
+注：预测结果包含95%置信区间，使用Monte Carlo模拟生成
