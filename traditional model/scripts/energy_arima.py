@@ -18,7 +18,7 @@ from pathlib import Path
 from sklearn.preprocessing import StandardScaler
 warnings.filterwarnings('ignore')
 
-# 设置中文字体
+# Set Chinese font
 try:
     font = FontProperties(fname=r'/System/Library/Fonts/PingFang.ttc')  # macOS
 except:
@@ -28,37 +28,37 @@ except:
         try:
             font = FontProperties(fname=r'/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf')  # Linux
         except:
-            print("警告: 未能找到合适的中文字体，图表中的中文可能无法正常显示")
+            print("Warning: Could not find suitable font, characters may not display properly")
             font = None
 
-# 设置绘图样式
+# Set plotting style
 plt.style.use('default')
 sns.set_style("whitegrid")
 mpl.rcParams['axes.unicode_minus'] = False
 
 def signal_handler(sig, frame):
-    """处理键盘中断信号"""
-    print('\n程序被用户中断')
+    """Handle keyboard interrupt signal"""
+    print('\nProgram interrupted by user')
     sys.exit(0)
 
-# 注册信号处理器
+# Register signal handler
 signal.signal(signal.SIGINT, signal_handler)
 
 def safe_plot(func):
-    """装饰器：安全地处理绘图操作"""
+    """Decorator: Safely handle plotting operations"""
     def wrapper(*args, **kwargs):
         try:
             result = func(*args, **kwargs)
-            plt.close()  # 确保图表被关闭
+            plt.close()  # Ensure plot is closed
             return result
         except Exception as e:
-            print(f"绘图过程中出错: {str(e)}")
-            plt.close()  # 确保图表被关闭
+            print(f"Error during plotting: {str(e)}")
+            plt.close()  # Ensure plot is closed
             return None
     return wrapper
 
 def evaluate_model(y_true, y_pred):
-    """评估模型性能"""
+    """Evaluate model performance"""
     mse = mean_squared_error(y_true, y_pred)
     rmse = np.sqrt(mse)
     mae = mean_absolute_error(y_true, y_pred)
@@ -71,7 +71,7 @@ def evaluate_model(y_true, y_pred):
         'R2': r2
     }
     
-    print("\n模型评估指标:")
+    print("\nModel Evaluation Metrics:")
     for metric, value in metrics.items():
         print(f"{metric}: {value:.4f}")
     
@@ -79,66 +79,60 @@ def evaluate_model(y_true, y_pred):
 
 @safe_plot
 def plot_predictions(actual, predicted, title, save_path=None):
-    """绘制预测结果"""
+    """Plot prediction results"""
     try:
-        # 创建图表
+        # Create figure
         fig, ax = plt.subplots(figsize=(15, 8))
         
-        # 设置背景样式
+        # Set background style
         ax.set_facecolor('white')
         ax.grid(True, linestyle='--', alpha=0.3)
         
-        # 绘制实际值和预测值
-        ax.plot(actual.index, actual.values, label='实际需求', linewidth=2, color='#2878B5')
-        ax.plot(predicted.index, predicted.values, label='预测需求', linewidth=2, color='#C82423', linestyle='--')
+        # Plot actual and predicted values
+        ax.plot(actual.index, actual.values, label='Actual Demand', linewidth=2, color='#2878B5')
+        ax.plot(predicted.index, predicted.values, label='Predicted Demand', linewidth=2, color='#C82423', linestyle='--')
         
-        # 设置标题和标签
-        if font is not None:
-            ax.set_title('能源需求预测分析', fontproperties=font, fontsize=16, pad=20)
-            ax.set_xlabel('时间', fontproperties=font, fontsize=12, labelpad=10)
-            ax.set_ylabel('需求量', fontproperties=font, fontsize=12, labelpad=10)
-            legend = ax.legend(loc='best', prop=font, fontsize=12, frameon=True, framealpha=0.8)
-        else:
-            ax.set_title('Energy Demand Prediction', fontsize=16, pad=20)
-            ax.set_xlabel('Time', fontsize=12, labelpad=10)
-            ax.set_ylabel('Demand', fontsize=12, labelpad=10)
-            legend = ax.legend(loc='best', fontsize=12, frameon=True, framealpha=0.8)
+        # Set title and labels
+        ax.set_title('Energy Demand Prediction Analysis', fontsize=16, pad=20)
+        ax.set_xlabel('Time', fontsize=12, labelpad=10)
+        ax.set_ylabel('Demand', fontsize=12, labelpad=10)
+        legend = ax.legend(loc='best', fontsize=12, frameon=True, framealpha=0.8)
         
-        # 调整x轴日期显示
+        # Adjust x-axis date display
         ax.xaxis.set_major_locator(mdates.AutoDateLocator())
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d\n%H:%M'))
         
-        # 自动调整x轴标签角度和间距
+        # Automatically adjust x-axis label angle and spacing
         plt.xticks(rotation=45, ha='right')
         
-        # 设置y轴范围，留出一定边距
+        # Set y-axis range with margin
         y_min = min(min(actual.values), min(predicted.values))
         y_max = max(max(actual.values), max(predicted.values))
         margin = (y_max - y_min) * 0.1
         ax.set_ylim(y_min - margin, y_max + margin)
         
-        # 调整布局
+        # Adjust layout
         plt.tight_layout()
         
-        # 保存图表
+        # Save figure
         if save_path:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
-            print(f"预测结果图表已保存至: {save_path}")
+            print(f"Prediction plot saved to: {save_path}")
         
-        # 显示图表
+        # Show plot
         plt.show()
         
     except Exception as e:
-        print(f"绘图出错: {str(e)}")
+        print(f"Error during plotting: {str(e)}")
         raise
     finally:
         plt.close()
 
 def optimize_sarimax_params(train_data, exog_data):
-    """网格搜索最优SARIMAX参数"""
-    print("正在搜索最优模型参数...")
+    """Grid search for optimal SARIMAX parameters"""
+    print("Searching for optimal model parameters...")
     
-    # 定义参数范围
+    # Define parameter ranges
     p = d = q = range(0, 2)
     pdq = list(itertools.product(p, d, q))
     seasonal_pdq = [(x[0], x[1], x[2], 24) for x in list(itertools.product(p, d, q))]
@@ -147,7 +141,7 @@ def optimize_sarimax_params(train_data, exog_data):
     best_params = None
     best_seasonal_params = None
     
-    # 使用部分数据进行参数搜索
+    # Use subset of data for parameter search
     train_size = min(len(train_data), 5000)
     train_subset = train_data[:train_size]
     exog_subset = exog_data[:train_size] if exog_data is not None else None
@@ -171,11 +165,11 @@ def optimize_sarimax_params(train_data, exog_data):
             except Exception:
                 continue
     
-    print('最优SARIMAX参数: {}x{}'.format(best_params, best_seasonal_params))
+    print('Optimal SARIMAX parameters: {}x{}'.format(best_params, best_seasonal_params))
     return best_params, best_seasonal_params
 
 def train_sarimax(data, exog_data, order=(1,1,1), seasonal_order=(1,1,1,24)):
-    """训练SARIMAX模型"""
+    """Train SARIMAX model"""
     model = SARIMAX(data,
                     exog=exog_data,
                     order=order,
@@ -186,30 +180,30 @@ def train_sarimax(data, exog_data, order=(1,1,1), seasonal_order=(1,1,1,24)):
     return model_fit
 
 def prepare_features(df):
-    """准备模型特征"""
-    # 创建时间特征
+    """Prepare model features"""
+    # Create time features
     df['hour'] = df.index.hour
     df['weekday'] = df.index.dayofweek
     df['month'] = df.index.month
     df['is_weekend'] = df.index.dayofweek.isin([5, 6]).astype(int)
     
-    # 创建滞后特征
+    # Create lag features
     df['lag_1'] = df['nat_demand'].shift(1)
-    df['lag_24'] = df['nat_demand'].shift(24)  # 前一天同一时刻
-    df['lag_168'] = df['nat_demand'].shift(168)  # 上周同一时刻
+    df['lag_24'] = df['nat_demand'].shift(24)  # Previous day same hour
+    df['lag_168'] = df['nat_demand'].shift(168)  # Previous week same hour
     
-    # 创建统计特征
+    # Create statistical features
     df['rolling_mean_6h'] = df['nat_demand'].rolling(window=6).mean()
     df['rolling_mean_24h'] = df['nat_demand'].rolling(window=24).mean()
     df['rolling_std_24h'] = df['nat_demand'].rolling(window=24).std()
     
-    # 处理缺失值
+    # Handle missing values
     for col in df.columns:
         if col != 'nat_demand':
             df[col] = df[col].fillna(method='bfill')
             df[col] = df[col].fillna(method='ffill')
     
-    # 标准化特征
+    # Standardize features
     scaler = StandardScaler()
     features = ['hour', 'weekday', 'month', 'is_weekend', 
                'lag_1', 'lag_24', 'lag_168',
@@ -219,133 +213,133 @@ def prepare_features(df):
     return df[features].values
 
 def save_report(predictions, metrics, model_summary, feature_importance, output_dir):
-    """保存预测报告"""
+    """Save prediction report"""
     try:
-        # 创建输出目录
+        # Create output directory
         os.makedirs(output_dir, exist_ok=True)
         
-        # 生成时间戳
+        # Generate timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
-        # 保存预测结果
+        # Save prediction results
         predictions_df = pd.DataFrame({
-            '时间': predictions.index,
-            '预测值': predictions.values
+            'Time': predictions.index,
+            'Predicted Value': predictions.values
         })
         predictions_path = os.path.join(output_dir, f'predictions_{timestamp}.csv')
         predictions_df.to_csv(predictions_path, index=False, encoding='utf-8-sig')
         
-        # 生成报告文本
+        # Generate report text
         report_path = os.path.join(output_dir, f'forecast_report_{timestamp}.txt')
         with open(report_path, 'w', encoding='utf-8') as f:
-            f.write("=== 能源需求预测分析报告 ===\n")
-            f.write(f"生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            f.write("=== Energy Demand Prediction Analysis Report ===\n")
+            f.write(f"Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
             
-            f.write("1. 模型评估指标\n")
+            f.write("1. Model Evaluation Metrics\n")
             f.write("-----------------\n")
             for metric, value in metrics.items():
                 f.write(f"{metric}: {value:.4f}\n")
             f.write("\n")
             
-            f.write("2. 特征重要性分析\n")
+            f.write("2. Feature Importance Analysis\n")
             f.write("-----------------\n")
             for feature, importance in feature_importance.items():
                 f.write(f"{feature}: {importance:.4f}\n")
             f.write("\n")
             
-            f.write("3. 模型详细信息\n")
+            f.write("3. Model Details\n")
             f.write("-----------------\n")
             f.write(str(model_summary))
             f.write("\n\n")
             
-            f.write("4. 文件说明\n")
+            f.write("4. File Information\n")
             f.write("-----------------\n")
-            f.write(f"- 预测结果: predictions_{timestamp}.csv\n")
-            f.write(f"- 预测图表: prediction_plot_{timestamp}.png\n")
-            f.write(f"- 详细报告: forecast_report_{timestamp}.txt\n")
+            f.write(f"- Prediction Results: predictions_{timestamp}.csv\n")
+            f.write(f"- Prediction Plot: prediction_plot_{timestamp}.png\n")
+            f.write(f"- Detailed Report: forecast_report_{timestamp}.txt\n")
         
-        print(f"\n报告文件已保存至目录: {output_dir}")
-        print(f"- 预测结果: predictions_{timestamp}.csv")
-        print(f"- 预测图表: prediction_plot_{timestamp}.png")
-        print(f"- 详细报告: forecast_report_{timestamp}.txt")
+        print(f"\nReport files saved to directory: {output_dir}")
+        print(f"- Prediction Results: predictions_{timestamp}.csv")
+        print(f"- Prediction Plot: prediction_plot_{timestamp}.png")
+        print(f"- Detailed Report: forecast_report_{timestamp}.txt")
         
         return timestamp
         
     except Exception as e:
-        print(f"保存报告时出错: {str(e)}")
+        print(f"Error saving report: {str(e)}")
         return None
 
 def energy_forecast(data_path):
-    """能源数据预测"""
+    """Energy data forecasting"""
     try:
-        print("正在读取数据...")
+        print("Reading data...")
         df = pd.read_csv(data_path, parse_dates=['datetime'], index_col='datetime')
         
-        # 预处理数据
-        print("\n正在处理数据...")
+        # Preprocess data
+        print("\nProcessing data...")
         df = df.sort_index()
         df = df.asfreq('h')
         
-        # 计算测试集大小（三个月）
-        test_hours = 24 * 90  # 90天 = 3个月
+        # Calculate test set size (three months)
+        test_hours = 24 * 90  # 90 days = 3 months
         
-        # 使用最近两年的数据
-        df = df.last('730D')  # 取最近两年数据
-        print(f"\n数据范围: {df.index.min()} 到 {df.index.max()}")
-        print(f"总小时数: {len(df)}")
+        # Use last two years of data
+        df = df.last('730D')  # Get last two years of data
+        print(f"\nData range: {df.index.min()} to {df.index.max()}")
+        print(f"Total hours: {len(df)}")
         
-        # 准备特征
-        print("\n正在准备特征...")
+        # Prepare features
+        print("\nPreparing features...")
         exog_features = prepare_features(df)
         
-        # 划分训练集和测试集（后三个月作为测试集）
+        # Split training and test sets (last three months as test set)
         train_data = df['nat_demand'][:-test_hours]
         test_data = df['nat_demand'][-test_hours:]
         train_exog = exog_features[:-test_hours]
         test_exog = exog_features[-test_hours:]
         
-        print("\n数据集划分:")
-        print(f"训练集: {len(train_data)} 小时 ({len(train_data)/24:.1f}天)")
-        print(f"测试集: {len(test_data)} 小时 ({len(test_data)/24:.1f}天)")
-        print(f"训练数据范围: {train_data.index.min()} 到 {train_data.index.max()}")
-        print(f"测试数据范围: {test_data.index.min()} 到 {test_data.index.max()}")
+        print("\nDataset split:")
+        print(f"Training set: {len(train_data)} hours ({len(train_data)/24:.1f} days)")
+        print(f"Test set: {len(test_data)} hours ({len(test_data)/24:.1f} days)")
+        print(f"Training data range: {train_data.index.min()} to {train_data.index.max()}")
+        print(f"Test data range: {test_data.index.min()} to {test_data.index.max()}")
         
-        # 搜索最优参数
-        print("\n正在搜索最优参数...")
+        # Search for optimal parameters
+        print("\nSearching for optimal parameters...")
         best_params, best_seasonal_params = optimize_sarimax_params(train_data, train_exog)
         
-        # 训练模型
-        print("\n正在训练模型...")
+        # Train model
+        print("\nTraining model...")
         model = train_sarimax(train_data, train_exog, 
                             order=best_params, 
                             seasonal_order=best_seasonal_params)
         
-        # 在测试集上进行预测
-        print("\n正在进行预测...")
+        # Make predictions on test set
+        print("\nGenerating predictions...")
         test_predictions = model.get_forecast(steps=len(test_data), exog=test_exog)
         predicted_mean = test_predictions.predicted_mean
         
-        # 评估模型
-        print("\n正在评估模型性能...")
+        # Evaluate model
+        print("\nEvaluating model performance...")
         metrics = evaluate_model(test_data, predicted_mean)
         
-        # 打印模型摘要
-        print("\n模型摘要:")
+        # Print model summary
+        print("\nModel Summary:")
         print(model.summary())
         
-        # 分析特征重要性
-        print("\n特征重要性:")
+        # Analyze feature importance
+        print("\nFeature Importance:")
         feature_names = ['hour', 'weekday', 'month', 'is_weekend', 
                          'lag_1', 'lag_24', 'lag_168',
                          'rolling_mean_6h', 'rolling_mean_24h', 'rolling_std_24h']
-        coefficients = model.params[1:11]  # 跳过截距项
+        coefficients = model.params[1:11]  # Skip intercept
         for name, coef in zip(feature_names, coefficients):
             print(f"{name}: {coef:.4f}")
         
-        # 创建输出目录
+        # Create output directory
         output_dir = Path('energy_reports')
         
-        # 保存预测结果和报告
+        # Save prediction results and report
         timestamp = save_report(
             predictions=predicted_mean,
             metrics=metrics,
@@ -359,30 +353,30 @@ def energy_forecast(data_path):
             output_dir=output_dir
         )
         
-        # 绘制并保存预测结果图表
+        # Plot and save prediction results
         if timestamp:
             plot_path = output_dir / f'prediction_plot_{timestamp}.png'
-            plot_predictions(test_data, predicted_mean, '能源需求预测结果（带特征）', save_path=plot_path)
+            plot_predictions(test_data, predicted_mean, 'Energy Demand Prediction Results (with features)', save_path=plot_path)
         
         return predicted_mean, metrics
         
     except Exception as e:
-        print(f"预测过程中出错: {str(e)}")
+        print(f"Error during forecasting: {str(e)}")
         return None, None
 
 if __name__ == "__main__":
     try:
-        print("\n=== 能源需求预测 (SARIMAX模型) ===")
+        print("\n=== Energy Demand Forecasting (SARIMAX Model) ===")
         energy_predictions, energy_metrics = energy_forecast('energy_processed.csv')
         if energy_metrics:
-            print("\n能源需求预测评估结果:")
+            print("\nEnergy Demand Prediction Evaluation Results:")
             for metric, value in energy_metrics.items():
                 print(f"{metric}: {value:.4f}")
         else:
-            print("能源需求预测失败，请检查数据格式")
+            print("Energy demand prediction failed, please check data format")
     except KeyboardInterrupt:
-        print('\n程序被用户中断')
+        print('\nProgram interrupted by user')
         sys.exit(0)
     except Exception as e:
-        print(f"程序运行出错: {str(e)}")
+        print(f"Program error: {str(e)}")
         sys.exit(1)

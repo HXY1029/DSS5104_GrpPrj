@@ -1,0 +1,8 @@
+SARIMAX Model Performance Metrics:
+--------------------------------
+SARIMA Order (p,d,q): (1, 0, 0)
+Seasonal Order (P,D,Q,s): (0, 0, 0, 5)
+--------------------------------
+MSE: 0.0064
+RMSE: 0.0798
+MAE: 0.0654

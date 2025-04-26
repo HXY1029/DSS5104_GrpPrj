@@ -17,7 +17,7 @@ import os
 from pathlib import Path
 warnings.filterwarnings('ignore')
 
-# 设置中文字体
+# Set Chinese font
 try:
     font = FontProperties(fname=r'/System/Library/Fonts/PingFang.ttc')  # macOS
 except:
@@ -27,37 +27,37 @@ except:
         try:
             font = FontProperties(fname=r'/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf')  # Linux
         except:
-            print("警告: 未能找到合适的中文字体，图表中的中文可能无法正常显示")
+            print("Warning: Could not find suitable Chinese font, Chinese characters may not display properly")
             font = None
 
-# 设置绘图样式
-plt.style.use('default')  # 使用默认样式
-sns.set_style("whitegrid")  # 设置seaborn样式
-mpl.rcParams['axes.unicode_minus'] = False    # 用来正常显示负号
+# Set plotting style
+plt.style.use('default')  # Use default style
+sns.set_style("whitegrid")  # Set seaborn style
+mpl.rcParams['axes.unicode_minus'] = False    # For displaying minus signs correctly
 
 def signal_handler(sig, frame):
-    """处理键盘中断信号"""
-    print('\n程序被用户中断')
+    """Handle keyboard interrupt signal"""
+    print('\nProgram interrupted by user')
     sys.exit(0)
 
-# 注册信号处理器
+# Register signal handler
 signal.signal(signal.SIGINT, signal_handler)
 
 def safe_plot(func):
-    """装饰器：安全地处理绘图操作"""
+    """Decorator: Safely handle plotting operations"""
     def wrapper(*args, **kwargs):
         try:
             result = func(*args, **kwargs)
-            plt.close()  # 确保图表被关闭
+            plt.close()  # Ensure the plot is closed
             return result
         except Exception as e:
-            print(f"绘图过程中出错: {str(e)}")
-            plt.close()  # 确保图表被关闭
+            print(f"Error during plotting: {str(e)}")
+            plt.close()  # Ensure the plot is closed
             return None
     return wrapper
 
 def evaluate_model(y_true, y_pred):
-    """评估模型性能"""
+    """Evaluate model performance"""
     mse = mean_squared_error(y_true, y_pred)
     rmse = np.sqrt(mse)
     mae = mean_absolute_error(y_true, y_pred)
@@ -70,7 +70,7 @@ def evaluate_model(y_true, y_pred):
         'R2': r2
     }
     
-    print("\n模型评估指标:")
+    print("\nModel Evaluation Metrics:")
     for metric, value in metrics.items():
         print(f"{metric}: {value:.4f}")
     
@@ -78,68 +78,62 @@ def evaluate_model(y_true, y_pred):
 
 @safe_plot
 def plot_predictions(actual, predicted, title, save_path=None):
-    """绘制预测结果"""
+    """Plot prediction results"""
     try:
-        # 创建图表
+        # Create figure
         fig, ax = plt.subplots(figsize=(15, 8))
         
-        # 设置背景样式
+        # Set background style
         ax.set_facecolor('white')
         ax.grid(True, linestyle='--', alpha=0.3)
         
-        # 绘制实际值和预测值
-        ax.plot(actual.index, actual.values, label='实际订单量', linewidth=2, color='#2878B5')
-        ax.plot(predicted.index, predicted.values, label='预测订单量', linewidth=2, color='#C82423', linestyle='--')
+        # Plot actual and predicted values
+        ax.plot(actual.index, actual.values, label='Actual PM2.5 Concentration', linewidth=2, color='#2878B5')
+        ax.plot(predicted.index, predicted.values, label='Predicted PM2.5 Concentration', linewidth=2, color='#C82423', linestyle='--')
         
-        # 设置标题和标签（使用指定字体）
-        if font is not None:
-            ax.set_title('交通订单量预测分析', fontproperties=font, fontsize=16, pad=20)
-            ax.set_xlabel('时间（小时）', fontproperties=font, fontsize=12, labelpad=10)
-            ax.set_ylabel('订单数量（单）', fontproperties=font, fontsize=12, labelpad=10)
-            legend = ax.legend(loc='best', prop=font, fontsize=12, frameon=True, framealpha=0.8)
-        else:
-            ax.set_title('Traffic Order Prediction', fontsize=16, pad=20)
-            ax.set_xlabel('Time (Hour)', fontsize=12, labelpad=10)
-            ax.set_ylabel('Order Count', fontsize=12, labelpad=10)
-            legend = ax.legend(loc='best', fontsize=12, frameon=True, framealpha=0.8)
+        # Set title and labels
+        ax.set_title('PM2.5 Concentration Prediction Analysis', fontsize=16, pad=20)
+        ax.set_xlabel('Time', fontsize=12, labelpad=10)
+        ax.set_ylabel('PM2.5 Concentration', fontsize=12, labelpad=10)
+        legend = ax.legend(loc='best', fontsize=12, frameon=True, framealpha=0.8)
         
-        # 调整x轴日期显示
+        # Adjust x-axis date display
         ax.xaxis.set_major_locator(mdates.AutoDateLocator())
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d\n%H:%M'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
         
-        # 自动调整x轴标签角度和间距
+        # Automatically adjust x-axis label angle and spacing
         plt.xticks(rotation=45, ha='right')
         
-        # 设置y轴范围，留出一定边距
+        # Set y-axis range with margin
         y_min = min(min(actual.values), min(predicted.values))
         y_max = max(max(actual.values), max(predicted.values))
         margin = (y_max - y_min) * 0.1
         ax.set_ylim(y_min - margin, y_max + margin)
         
-        # 调整布局
+        # Adjust layout
         plt.tight_layout()
         
-        # 保存图表
+        # Save figure
         if save_path:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
-            print(f"预测结果图表已保存至: {save_path}")
+            print(f"Prediction plot saved to: {save_path}")
         
-        # 显示图表
+        # Show plot
         plt.show()
         
     except Exception as e:
-        print(f"绘图出错: {str(e)}")
+        print(f"Error during plotting: {str(e)}")
         raise
     finally:
         plt.close()
 
 def optimize_sarimax_params(train_data, exog_data):
     """
-    网格搜索最优SARIMAX参数
+    Grid search for optimal SARIMAX parameters
     """
-    print("正在搜索最优模型参数...")
+    print("Searching for optimal model parameters...")
     
-    # 定义参数范围
+    # Define parameter ranges
     p = d = q = range(0, 2)
     pdq = list(itertools.product(p, d, q))
     seasonal_pdq = [(x[0], x[1], x[2], 24) for x in list(itertools.product(p, d, q))]
@@ -157,7 +151,7 @@ def optimize_sarimax_params(train_data, exog_data):
                               seasonal_order=seasonal_param,
                               enforce_stationarity=False,
                               enforce_invertibility=False)
-                results = model.fit()
+                results = model.fit(disp=False)
                 
                 if results.aic < best_aic:
                     best_aic = results.aic
@@ -167,32 +161,32 @@ def optimize_sarimax_params(train_data, exog_data):
             except Exception as e:
                 continue
     
-    print('最优SARIMAX参数: {}x{}'.format(best_params, best_seasonal_params))
+    print('Optimal SARIMAX parameters: {}x{}'.format(best_params, best_seasonal_params))
     return best_params, best_seasonal_params
 
 def train_sarimax(data, exog_data, order=(1,1,1), seasonal_order=(1,1,1,24)):
-    """训练SARIMAX模型"""
+    """Train SARIMAX model"""
     model = SARIMAX(data,
                     exog=exog_data,
                     order=order,
                     seasonal_order=seasonal_order,
                     enforce_stationarity=False,
                     enforce_invertibility=False)
-    model_fit = model.fit()
+    model_fit = model.fit(disp=False)
     return model_fit
 
 def prepare_features(df):
-    """准备模型特征"""
-    # 创建特征
-    df['lag_1'] = df['trip_count'].shift(1)
+    """Prepare model features"""
+    # Create features
+    df['lag_1'] = df['pollution'].shift(1)
     df['weekday'] = pd.to_datetime(df.index).dayofweek
-    df['rolling_mean_6h'] = df['trip_count'].rolling(window=6).mean()
+    df['rolling_mean_6h'] = df['pollution'].rolling(window=6).mean()
     
-    # 处理缺失值
+    # Handle missing values
     df['lag_1'] = df['lag_1'].fillna(method='bfill')
     df['rolling_mean_6h'] = df['rolling_mean_6h'].fillna(method='bfill')
     
-    # 标准化特征
+    # Standardize features
     from sklearn.preprocessing import StandardScaler
     scaler = StandardScaler()
     features = ['lag_1', 'weekday', 'rolling_mean_6h']
@@ -201,131 +195,128 @@ def prepare_features(df):
     return df[features].values
 
 def save_report(predictions, metrics, model_summary, feature_importance, output_dir):
-    """保存预测报告"""
+    """Save prediction report"""
     try:
-        # 创建输出目录
+        # Create output directory
         os.makedirs(output_dir, exist_ok=True)
         
-        # 生成时间戳
+        # Generate timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
-        # 保存预测结果
+        # Save prediction results
         predictions_df = pd.DataFrame({
-            '时间': predictions.index,
-            '预测值': predictions.values
+            'Time': predictions.index,
+            'Predicted Value': predictions.values
         })
         predictions_path = os.path.join(output_dir, f'predictions_{timestamp}.csv')
         predictions_df.to_csv(predictions_path, index=False, encoding='utf-8-sig')
         
-        # 生成报告文本
+        # Generate report text
         report_path = os.path.join(output_dir, f'forecast_report_{timestamp}.txt')
         with open(report_path, 'w', encoding='utf-8') as f:
-            f.write("=== 交通订单预测分析报告 ===\n")
-            f.write(f"生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            f.write("=== PM2.5 Concentration Prediction Analysis Report ===\n")
+            f.write(f"Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
             
-            f.write("1. 模型评估指标\n")
+            f.write("1. Model Evaluation Metrics\n")
             f.write("-----------------\n")
             for metric, value in metrics.items():
                 f.write(f"{metric}: {value:.4f}\n")
             f.write("\n")
             
-            f.write("2. 特征重要性分析\n")
+            f.write("2. Feature Importance Analysis\n")
             f.write("-----------------\n")
             for feature, importance in feature_importance.items():
                 f.write(f"{feature}: {importance:.4f}\n")
             f.write("\n")
             
-            f.write("3. 模型详细信息\n")
+            f.write("3. Model Details\n")
             f.write("-----------------\n")
             f.write(str(model_summary))
             f.write("\n\n")
             
-            f.write("4. 文件说明\n")
+            f.write("4. File Information\n")
             f.write("-----------------\n")
-            f.write(f"- 预测结果: predictions_{timestamp}.csv\n")
-            f.write(f"- 预测图表: prediction_plot_{timestamp}.png\n")
-            f.write(f"- 详细报告: forecast_report_{timestamp}.txt\n")
+            f.write(f"- Prediction Results: predictions_{timestamp}.csv\n")
+            f.write(f"- Prediction Plot: prediction_plot_{timestamp}.png\n")
+            f.write(f"- Detailed Report: forecast_report_{timestamp}.txt\n")
         
-        print(f"\n报告文件已保存至目录: {output_dir}")
-        print(f"- 预测结果: predictions_{timestamp}.csv")
-        print(f"- 预测图表: prediction_plot_{timestamp}.png")
-        print(f"- 详细报告: forecast_report_{timestamp}.txt")
+        print(f"\nReport files saved to directory: {output_dir}")
+        print(f"- Prediction Results: predictions_{timestamp}.csv")
+        print(f"- Prediction Plot: prediction_plot_{timestamp}.png")
+        print(f"- Detailed Report: forecast_report_{timestamp}.txt")
         
         return timestamp
         
     except Exception as e:
-        print(f"保存报告时出错: {str(e)}")
+        print(f"Error saving report: {str(e)}")
         return None
 
-def traffic_forecast(data_path):
-    """交通数据预测"""
+def climate_forecast(data_path):
+    """Climate data forecasting"""
     try:
-        print("正在读取数据...")
+        print("Reading data...")
         df = pd.read_csv(data_path)
+        df['date'] = pd.to_datetime(df['date'])
+        df = df.set_index('date')
         
-        # 确保pickup_hour列是datetime类型
-        df['pickup_hour'] = pd.to_datetime(df['pickup_hour'])
-        
-        # 首先按时间分组并聚合，避免重复时间戳
-        print("\n正在处理数据...")
-        df = df.groupby('pickup_hour')['trip_count'].sum().reset_index()
-        
-        # 创建连续的时间索引
-        idx = pd.date_range(start=df['pickup_hour'].min(),
-                          end=df['pickup_hour'].max(),
-                          freq='H')
-        
-        # 重新索引并填充缺失值
-        df = df.set_index('pickup_hour')
-        df = df.reindex(idx)
+        # Preprocess data
+        print("\nProcessing data...")
+        df['pollution'] = df['pollution'].replace([np.inf, -np.inf], np.nan)
         df = df.fillna(method='ffill').fillna(method='bfill')
         
-        # 准备特征
-        print("\n正在准备特征...")
+        print(f"Data range: {df.index.min()} to {df.index.max()}")
+        print(f"Total observations: {len(df)}")
+        
+        # Prepare features
+        print("\nPreparing features...")
         exog_features = prepare_features(df)
         
-        # 划分训练集和测试集
-        print("\n正在划分训练集和测试集...")
+        # Split training and test sets
+        print("\nSplitting training and test sets...")
         train_size = int(len(df) * 0.8)
-        train_data = df['trip_count'][:train_size]
-        test_data = df['trip_count'][train_size:]
+        train_data = df['pollution'][:train_size]
+        test_data = df['pollution'][train_size:]
         train_exog = exog_features[:train_size]
         test_exog = exog_features[train_size:]
         
-        # 搜索最优参数
-        print("\n正在搜索最优参数...")
+        print("\nDataset split:")
+        print(f"Training set: {len(train_data)} records ({train_data.index.min()} to {train_data.index.max()})")
+        print(f"Test set: {len(test_data)} records ({test_data.index.min()} to {test_data.index.max()})")
+        
+        # Search for optimal parameters
+        print("\nSearching for optimal parameters...")
         best_params, best_seasonal_params = optimize_sarimax_params(train_data, train_exog)
         
-        # 训练模型
-        print("\n正在训练模型...")
+        # Train model
+        print("\nTraining model...")
         model = train_sarimax(train_data, train_exog, 
                             order=best_params, 
                             seasonal_order=best_seasonal_params)
         
-        # 在测试集上进行预测
-        print("\n正在进行预测...")
+        # Make predictions on test set
+        print("\nMaking predictions...")
         test_predictions = model.get_forecast(steps=len(test_data), exog=test_exog)
         predicted_mean = test_predictions.predicted_mean
         
-        # 评估模型
-        print("\n正在评估模型性能...")
+        # Evaluate model
+        print("\nEvaluating model performance...")
         metrics = evaluate_model(test_data, predicted_mean)
         
-        # 打印模型摘要
-        print("\n模型摘要:")
+        # Print model summary
+        print("\nModel Summary:")
         print(model.summary())
         
-        # 分析特征重要性
-        print("\n特征重要性:")
+        # Analyze feature importance
+        print("\nFeature Importance:")
         feature_names = ['lag_1', 'weekday', 'rolling_mean_6h']
-        coefficients = model.params[1:4]  # 跳过截距项
+        coefficients = model.params[1:4]  # Skip intercept
         for name, coef in zip(feature_names, coefficients):
             print(f"{name}: {coef:.4f}")
         
-        # 创建输出目录
-        output_dir = Path('forecast_reports')
+        # Create output directory
+        output_dir = Path('climate_reports')
         
-        # 保存预测结果和报告
+        # Save prediction results and report
         timestamp = save_report(
             predictions=predicted_mean,
             metrics=metrics,
@@ -337,30 +328,30 @@ def traffic_forecast(data_path):
             output_dir=output_dir
         )
         
-        # 绘制并保存预测结果图表
+        # Plot and save prediction results
         if timestamp:
             plot_path = output_dir / f'prediction_plot_{timestamp}.png'
-            plot_predictions(test_data, predicted_mean, '交通订单预测结果（带特征）', save_path=plot_path)
+            plot_predictions(test_data, predicted_mean, 'PM2.5 Concentration Prediction Results (with features)', save_path=plot_path)
         
         return predicted_mean, metrics
         
     except Exception as e:
-        print(f"预测过程中出错: {str(e)}")
+        print(f"Error during forecasting: {str(e)}")
         return None, None
 
 if __name__ == "__main__":
     try:
-        print("\n=== 交通预测 ===")
-        traffic_predictions, traffic_metrics = traffic_forecast('transport_hourly_order_features.csv')
-        if traffic_metrics:
-            print("\n交通预测评估结果:")
-            for metric, value in traffic_metrics.items():
+        print("\n=== Climate Forecasting (SARIMAX Model) ===")
+        climate_predictions, climate_metrics = climate_forecast('climate_processed_pollution_multivariate.csv')
+        if climate_metrics:
+            print("\nClimate Forecasting Evaluation Results:")
+            for metric, value in climate_metrics.items():
                 print(f"{metric}: {value:.4f}")
         else:
-            print("交通预测失败，请检查数据格式")
+            print("Climate forecasting failed, please check data format")
     except KeyboardInterrupt:
-        print('\n程序被用户中断')
+        print('\nProgram interrupted by user')
         sys.exit(0)
     except Exception as e:
-        print(f"程序运行出错: {str(e)}")
+        print(f"Program error: {str(e)}")
         sys.exit(1) 

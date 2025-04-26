@@ -1,14 +1,14 @@
-=== 能源需求预测分析报告 ===
-生成时间: 2025-04-23 12:11:55
+=== Energy Demand Prediction Analysis Report ===
+Generated at: 2025-04-25 21:00:40
 
-1. 模型评估指标
+1. Model Evaluation Metrics
 -----------------
 MSE: 10244.1687
 RMSE: 101.2135
 MAE: 84.5104
 R2: 0.0620
 
-2. 特征重要性分析
+2. Feature Importance Analysis
 -----------------
 hour: -1.0423
 weekday: -1.1431
@@ -21,14 +21,14 @@ rolling_mean_6h: 47.5790
 rolling_mean_24h: -41.9899
 rolling_std_24h: 0.6184
 
-3. 模型详细信息
+3. Model Details
 -----------------
                                      SARIMAX Results                                      
 ==========================================================================================
 Dep. Variable:                         nat_demand   No. Observations:                15360
 Model:             SARIMAX(0, 1, 1)x(0, 1, 1, 24)   Log Likelihood              -67808.326
-Date:                            Wed, 23 Apr 2025   AIC                         135642.651
-Time:                                    12:11:55   BIC                         135741.922
+Date:                            Fri, 25 Apr 2025   AIC                         135642.651
+Time:                                    21:00:40   BIC                         135741.922
 Sample:                                06-28-2018   HQIC                        135675.555
                                      - 03-29-2020                                         
 Covariance Type:                              opg                                         
@@ -59,8 +59,8 @@ Warnings:
 [1] Covariance matrix calculated using the outer product of gradients (complex-step).
 [2] Covariance matrix is singular or near-singular, with condition number 3.31e+21. Standard errors may be unstable.
 
-4. 文件说明
+4. File Information
 -----------------
-- 预测结果: predictions_20250423_121155.csv
-- 预测图表: prediction_plot_20250423_121155.png
-- 详细报告: forecast_report_20250423_121155.txt
+- Prediction Results: predictions_20250425_210040.csv
+- Prediction Plot: prediction_plot_20250425_210040.png
+- Detailed Report: forecast_report_20250425_210040.txt

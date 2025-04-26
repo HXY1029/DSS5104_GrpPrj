@@ -1,27 +1,27 @@
-=== PM2.5浓度预测分析报告 ===
-生成时间: 2025-04-23 08:11:29
+=== PM2.5 Concentration Prediction Analysis Report ===
+Generated at: 2025-04-25 21:28:31
 
-1. 模型评估指标
+1. Model Evaluation Metrics
 -----------------
 MSE: 3490.8830
 RMSE: 59.0837
 MAE: 41.6061
 R2: 0.6014
 
-2. 特征重要性分析
+2. Feature Importance Analysis
 -----------------
 lag_1: 5.8825
 weekday: 127.8311
 rolling_mean_6h: 0.7792
 
-3. 模型详细信息
+3. Model Details
 -----------------
                                      SARIMAX Results                                      
 ==========================================================================================
 Dep. Variable:                          pollution   No. Observations:                35020
 Model:             SARIMAX(1, 0, 1)x(0, 1, 1, 24)   Log Likelihood             -158101.351
-Date:                            Wed, 23 Apr 2025   AIC                         316216.703
-Time:                                    08:11:28   BIC                         316275.938
+Date:                            Fri, 25 Apr 2025   AIC                         316216.703
+Time:                                    21:28:31   BIC                         316275.938
 Sample:                                01-03-2010   HQIC                        316235.571
                                      - 01-01-2014                                         
 Covariance Type:                              opg                                         
@@ -45,8 +45,8 @@ Prob(H) (two-sided):                  0.00   Kurtosis:                        88
 Warnings:
 [1] Covariance matrix calculated using the outer product of gradients (complex-step).
 
-4. 文件说明
+4. File Information
 -----------------
-- 预测结果: predictions_20250423_081129.csv
-- 预测图表: prediction_plot_20250423_081129.png
-- 详细报告: forecast_report_20250423_081129.txt
+- Prediction Results: predictions_20250425_212831.csv
+- Prediction Plot: prediction_plot_20250425_212831.png
+- Detailed Report: forecast_report_20250425_212831.txt

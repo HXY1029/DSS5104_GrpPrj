@@ -1,27 +1,27 @@
-=== 交通订单预测分析报告 ===
-生成时间: 2025-04-23 00:32:56
+=== Traffic Order Prediction Analysis Report ===
+Generated at: 2025-04-25 17:07:51
 
-1. 模型评估指标
+1. Model Evaluation Metrics
 -----------------
 MSE: 13963522.0298
 RMSE: 3736.7796
 MAE: 2694.7561
 R2: 0.8734
 
-2. 特征重要性分析
+2. Feature Importance Analysis
 -----------------
 lag_1: 124.6077
 weekday: 3375.1083
 rolling_mean_6h: 0.3207
 
-3. 模型详细信息
+3. Model Details
 -----------------
                                       SARIMAX Results                                       
 ============================================================================================
 Dep. Variable:                           trip_count   No. Observations:                 3475
 Model:             SARIMAX(0, 1, 0)x(1, 1, [1], 24)   Log Likelihood              -31611.680
-Date:                              Wed, 23 Apr 2025   AIC                          63235.361
-Time:                                      00:32:56   BIC                          63272.194
+Date:                              Fri, 25 Apr 2025   AIC                          63235.361
+Time:                                      17:07:51   BIC                          63272.194
 Sample:                                  01-02-2024   HQIC                         63248.521
                                        - 05-25-2024                                         
 Covariance Type:                                opg                                         
@@ -44,8 +44,8 @@ Prob(H) (two-sided):                  0.00   Kurtosis:                        27
 Warnings:
 [1] Covariance matrix calculated using the outer product of gradients (complex-step).
 
-4. 文件说明
+4. File Information
 -----------------
-- 预测结果: predictions_20250423_003256.csv
-- 预测图表: prediction_plot_20250423_003256.png
-- 详细报告: forecast_report_20250423_003256.txt
+- Prediction Results: predictions_20250425_170751.csv
+- Prediction Plot: prediction_plot_20250425_170751.png
+- Detailed Report: forecast_report_20250425_170751.txt

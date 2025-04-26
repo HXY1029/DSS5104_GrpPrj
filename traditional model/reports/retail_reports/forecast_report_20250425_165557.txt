@@ -1,28 +1,28 @@
-=== 零售销售量预测分析报告 ===
-生成时间: 2025-04-23 14:57:49
+=== Retail Sales Prediction Analysis Report ===
+Generated at: 2025-04-25 16:55:57
 
-1. 模型评估指标
+1. Model Evaluation Metrics
 -----------------
 MSE: 464496543012.3087
 RMSE: 681539.8323
 MAE: 530003.0604
 R2: 0.5573
 
-2. 特征重要性分析
+2. Feature Importance Analysis
 -----------------
 lag_1: -645038.1318
 lag_7: 153331.4853
 rolling_mean_7: -12561.1957
 rolling_std_7: 0.7524
 
-3. 模型详细信息
+3. Model Details
 -----------------
                                      SARIMAX Results                                     
 =========================================================================================
 Dep. Variable:                             Sales   No. Observations:                  748
 Model:             SARIMAX(1, 0, 1)x(1, 1, 1, 7)   Log Likelihood              -10728.038
-Date:                           Wed, 23 Apr 2025   AIC                          21474.076
-Time:                                   14:57:49   BIC                          21515.438
+Date:                           Fri, 25 Apr 2025   AIC                          21474.076
+Time:                                   16:55:57   BIC                          21515.438
 Sample:                               01-08-2013   HQIC                         21490.031
                                     - 01-25-2015                                         
 Covariance Type:                             opg                                         
@@ -49,8 +49,8 @@ Warnings:
 [1] Covariance matrix calculated using the outer product of gradients (complex-step).
 [2] Covariance matrix is singular or near-singular, with condition number 1.94e+28. Standard errors may be unstable.
 
-4. 文件说明
+4. File Information
 -----------------
-- 预测结果: predictions_20250423_145749.csv
-- 预测图表: prediction_plot_20250423_145749.png
-- 详细报告: forecast_report_20250423_145749.txt
+- Prediction Results: predictions_20250425_165557.csv
+- Prediction Plot: prediction_plot_20250425_165557.png
+- Detailed Report: forecast_report_20250425_165557.txt
